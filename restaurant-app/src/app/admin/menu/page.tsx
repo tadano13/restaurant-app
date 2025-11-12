@@ -3,7 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import { IMenuItem } from '@/types';
 import Modal from '@/components/common/Modal';
-import MenuForm from 'I:/restaurant-app/src/components/customer/admin/MenuForm';
+//
+// THIS IS THE CORRECTED IMPORT PATH:
+//
+import MenuForm from '@/components/admin/MenuForm'; 
+//
+//
+//
 import Image from 'next/image';
 
 // Placeholder restaurant ID
@@ -133,7 +139,7 @@ export default function MenuPage() {
                       alt={item.name}
                       width={50}
                       height={50}
-                      className="rounded-md object-cover"
+                      className="rounded-md object-.cover"
                     />
                   </td>
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">{item.name}</td>
