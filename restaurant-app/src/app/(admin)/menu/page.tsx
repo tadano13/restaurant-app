@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { IMenuItem } from '@/types';
 import Modal from '@/components/common/Modal';
-import MenuForm from 'I:/restaurant-app/src/components/customer/admin/MenuForm';
+import MenuForm from '@/components/admin/MenuForm';
 import Image from 'next/image';
 
 // Placeholder restaurant ID
@@ -177,4 +177,5 @@ export default function MenuPage() {
       </Modal>
     </div>
   );
+
 }
