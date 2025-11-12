@@ -1,16 +1,17 @@
+"use client";
+
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import TableBooking from '@/models/TableBooking';
 import Table from '@/models/Table';
 import { verifyToken } from '@/lib/auth';
 
-interface IParams {
-  restaurant_id: string;
-  booking_id: string;
-}
-
-// PUT /api/bookings/:booking_id (Admin only)
-export async function PUT(request: NextRequest, { params }: { params: IParams }) {
+// --- THIS IS THE CORRECTED FUNCTION SIGNATURE ---
+// We removed the separate IParams interface and typed it inline.
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { restaurant_id: string; booking_id: string } }
+) {
   try {
     // 1. Verify Authentication (Admin only)
     const user = await verifyToken(request);
