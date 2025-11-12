@@ -40,7 +40,8 @@ export default function MenuForm({ itemToEdit, onSave, onClose }: MenuFormProps)
     }
   }, [itemToEdit]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+  // --- THIS IS THE CORRECTED LINE (added '=>') ---
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     setFormData((prev) => ({
       ...prev,
