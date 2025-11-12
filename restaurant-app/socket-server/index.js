@@ -3,16 +3,23 @@ const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
 
+// --- PRODUCTION: Replace this with your Vercel app's URL ---
+// You will get this URL in Step 3
+const VERCEL_APP_URL = process.env.VERCEL_URL || "http://localhost:3000";
+
 const app = express();
-app.use(cors()); // Allow all origins
+
+// Set up CORS
+const corsOptions = {
+  origin: [VERCEL_APP_URL, "http://localhost:3000"], // Allow dev and prod
+  methods: ["GET", "POST"]
+};
+app.use(cors(corsOptions));
 
 const server = http.createServer(app);
 
 const io = new Server(server, {
-  cors: {
-    origin: "*", // Allow your Vercel app URL
-    methods: ["GET", "POST"]
-  }
+  cors: corsOptions
 });
 
 app.get('/', (req, res) => {
@@ -25,7 +32,6 @@ io.on('connection', (socket) => {
   // Listen for an order status update from the admin panel
   socket.on('order:status-update', (data) => {
     // Broadcast this update to the specific customer
-    // We can make the customer join a "room" named after their order
     console.log('Broadcasting order update:', data);
     io.emit(`order:${data.orderId}`, data.status); //
   });
