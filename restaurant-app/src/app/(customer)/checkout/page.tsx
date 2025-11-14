@@ -11,7 +11,6 @@ export default function CheckoutPage() {
   // State for the form
   const [tableNumber, setTableNumber] = useState('');
   const [customerName, setCustomerName] = useState('');
-  const [customerPhone, setCustomerPhone] = useState('');
   const [specialInstructions, setSpecialInstructions] = useState('');
 
   // State for submission
@@ -19,8 +18,8 @@ export default function CheckoutPage() {
   const [error, setError] = useState<string | null>(null);
 
   // This is a placeholder. In a real app, you'd get this from
-  // the QR scan or an earlier selection.
-  const MOCK_TABLE_ID = "60d0fe4f5311236168a109cb"; // Replace with a real-looking Mongo ID for testing
+  // the QR scan or a context.
+  const MOCK_TABLE_ID = "60d0fe4f5311236168a109cb"; // Replace with a real-looking Mongo ID
 
   const handleSubmitOrder = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,14 +46,9 @@ export default function CheckoutPage() {
 
     // 2. Create the order payload
     const orderPayload = {
-      // We are using a mock table ID. In a real app, you'd fetch
-      // the table's _id based on the tableNumber.
-      table_id: MOCK_TABLE_ID, 
+      table_id: MOCK_TABLE_ID, // Using mock table ID
       items: orderItems,
       notes: specialInstructions,
-      // Customer details can be added here if your API supports it
-      // customer_name: customerName, 
-      // customer_phone: customerPhone,
     };
 
     try {
@@ -74,8 +68,7 @@ export default function CheckoutPage() {
 
       // 4. Handle success
       clearCart();
-      // Redirect to a "thank you" or order status page
-      // We will create this page next.
+      // Redirect to the order status page
       router.push(`/orders/${data.order_id}`); 
       
     } catch (err: any) {
@@ -167,7 +160,6 @@ export default function CheckoutPage() {
             <span>${totalPrice.toFixed(2)}</span>
           </div>
         </div>
-
       </div>
     </div>
   );
