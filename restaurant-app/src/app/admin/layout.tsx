@@ -1,6 +1,7 @@
 import React from 'react';
-import Sidebar from '@/components/customer/admin/Sidebar';
-
+// --- THIS IS THE FIX ---
+import Sidebar from '@/components/admin/Sidebar'; 
+// --- END OF FIX ---
 
 // This layout will wrap all admin-facing pages
 export default function AdminLayout({
@@ -20,5 +21,4 @@ export default function AdminLayout({
       </div>
     </div>
   );
-
 }
