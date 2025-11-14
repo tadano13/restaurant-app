@@ -3,14 +3,16 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+// --- THESE LINKS ARE NOW CORRECT ---
+// They point to /admin/dashboard, /admin/orders, etc.
 const adminLinks = [
-  { name: 'Dashboard', href: '/(admin)/dashboard' },
-  { name: 'Orders', href: '/(admin)/orders' },
-  { name: 'Menu', href: '/(admin)/menu' },
-  { name: 'Tables', href: '/(admin)/tables' },
-  { name: 'Bookings', href: '/(admin)/bookings' },
-  { name: 'Analytics', href: '/(admin)/analytics' },
-  { name: 'Settings', href: '/(admin)/settings' },
+  { name: 'Dashboard', href: '/admin/dashboard' },
+  { name: 'Orders', href: '/admin/orders' },
+  { name: 'Menu', href: '/admin/menu' },
+  { name: 'Tables', href: '/admin/tables' },
+  { name:ag: 'Bookings', href: '/admin/bookings' },
+  { name: 'Analytics', href: '/admin/analytics' },
+  { name: 'Settings', href: '/admin/settings' },
 ];
 
 export default function Sidebar() {
@@ -40,7 +42,6 @@ export default function Sidebar() {
         })}
       </nav>
       <div className="p-4 border-t border-gray-700">
-        {/* Auth controls can go here */}
         <button className="w-full text-left px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700">
           Logout (placeholder)
         </button>
