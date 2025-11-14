@@ -1,10 +1,11 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { ICartItem, IMenuItem } from '@/types';
+// We will get IMenuItem from types, but define CartItem here
+import { IMenuItem } from '@/types'; 
 
-// Define the shape of the cart item
-interface CartItem extends IMenuItem {
+// Define the shape of the cart item and EXPORT it
+export interface CartItem extends IMenuItem {
   quantity: number;
   selectedPortion: string;
   itemPrice: number; // Price for one item with portion
