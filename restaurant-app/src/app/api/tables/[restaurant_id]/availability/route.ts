@@ -1,67 +1,97 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
-import Table from '@/models/Table';
-import TableBooking from '@/models/TableBooking';
-import { ITable } from '@/types';
+import Order from '@/models/Order';
+import { verifyToken } from '@/lib/auth';
+import { socket } from '@/lib/socket'; // Import the socket client
 
-interface IParams {
-  restaurant_id: string;
-}
-
-// GET /api/tables/:restaurant_id/availability?date=...&time=...&guests=...
-export async function GET(request: NextRequest, { params }: { params: IParams }) {
+// GET /api/orders/:order_id
+// --- FIX 1: Replaced IParams with inline type ---
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { order_id: string } }
+) {
   try {
     await connectDB();
-    const { restaurant_id } = params;
-    const { searchParams } = request.nextUrl;
+    const { order_id } = params;
 
-    const date = searchParams.get('date'); // e.g., "2025-12-31"
-    const time = searchParams.get('time'); // e.g., "19:30"
-    const guests = searchParams.get('guests'); // e.g., "4"
+    const order = await Order.findById(order_id)
+      .populate('table_id', 'table_number')
+      .populate('items.menu_item_id', 'name image_url');
 
-    if (!date || !time || !guests) {
-      return NextResponse.json(
-        { message: 'Date, time, and guests are required' },
-        { status: 400 }
-      );
+    if (!order) {
+      return NextResponse.json({ message: 'Order not found' }, { status: 404 });
     }
 
-    const bookingDate = new Date(`${date}T${time}:00`);
+    // TODO: Add auth check if this is for a customer
+    // or an admin
 
-    // 1. Find all tables that meet the guest capacity
-    // --- FIX 1: Cast the result of .lean() to our type ---
-    const allTables = (await Table.find({
-      restaurant_id,
-      capacity: { $gte: parseInt(guests, 10) },
-    }).lean()) as ITable[]; // <-- This tells TS what the type is
-
-    // 2. Find all *conflicting* bookings for those tables on that date
-    // Now this line will work, since TS knows `t` is an ITable
-    const tableIds = allTables.map((t) => t._id);
-
-    // Find bookings that overlap with the requested time
-    // This simple logic just checks for the same date and time slot
-    const conflictingBookings = await TableBooking.find({
-      table_id: { $in: tableIds },
-      booking_date: bookingDate,
-      booking_time: time,
-      status: 'confirmed', // Only check confirmed bookings
-    }).select('table_id');
-
-    // --- FIX 2: Corrected the typo (b) to (b) => ---
-    const bookedTableIds = new Set(
-      conflictingBookings.map((b) => b.table_id.toString())
-    );
-
-    // 3. Filter out tables that are already booked
-    // This line will also work now
-    const availableTables = allTables.filter(
-      (table) => !bookedTableIds.has(table._id.toString())
-    );
-
-    return NextResponse.json(availableTables, { status: 200 });
+    return NextResponse.json(order, { status: 200 });
   } catch (error) {
-    console.error('GET /api/tables/availability error:', error);
+    console.error('GET /api/orders/:id error:', error);
+    return NextResponse.json(
+      { message: 'An internal server error occurred' },
+      { status: 500 }
+    );
+  }
+}
+
+// PUT /api/orders/:order_id (Update Status)
+// --- FIX 2: Replaced IParams with inline type ---
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { order_id: string } }
+) {
+  try {
+    // 1. Verify Authentication (Admin/Staff only)
+    const user = await verifyToken(request);
+    if (!user || (user.role !== 'admin' && user.role !== 'staff')) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
+    await connectDB();
+    const { order_id } = params;
+    const { status } = await request.json(); // "confirmed", "preparing", "ready", "served"
+
+    if (!status) {
+      return NextResponse.json({ message: 'Status is required' }, { status: 400 });
+    }
+
+    // 2. Find and update the order
+    const updatedOrder = await Order.findByIdAndUpdate(
+      order_id,
+      { status },
+      { new: true } // Return the new, updated document
+    );
+
+    if (!updatedOrder) {
+      return NextResponse.json({ message: 'Order not found' }, { status: 404 });
+    }
+
+    // 3. Ensure user is updating an order for their own restaurant
+    if (user.restaurant_id !== updatedOrder.restaurant_id.toString()) {
+      return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+    }
+
+    // --- REAL-TIME UPDATE ---
+    // 4. Connect, emit the event, and disconnect
+    // This is a simple fire-and-forget emit
+    try {
+      socket.connect();
+      socket.emit('order:status-update', {
+        orderId: updatedOrder._id.toString(),
+        status: updatedOrder.status,
+      });
+      socket.disconnect();
+    } catch (socketError) {
+      console.error('Socket.io emit error:', socketError);
+      // Do not fail the API request if the socket fails
+    }
+    // --- END REAL-TIME ---
+
+    // 5. Return the successful API response
+    return NextResponse.json(updatedOrder, { status: 200 });
+  } catch (error) {
+    console.error('PUT /api/orders/:id error:', error);
     return NextResponse.json(
       { message: 'An internal server error occurred' },
       { status: 500 }
