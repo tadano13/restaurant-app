@@ -1,5 +1,6 @@
 import React from 'react';
-import Sidebar from 'I:/restaurant-app/src/components/customer/admin/Sidebar';
+import Sidebar from '@/components/customer/admin/Sidebar';
+
 
 // This layout will wrap all admin-facing pages
 export default function AdminLayout({
@@ -19,4 +20,5 @@ export default function AdminLayout({
       </div>
     </div>
   );
+
 }
