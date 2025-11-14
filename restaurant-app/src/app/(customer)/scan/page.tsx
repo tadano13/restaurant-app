@@ -13,12 +13,10 @@ export default function ScanPage() {
   const [scanError, setScanError] = useState<string | null>(null);
 
   useEffect(() => {
-    // We only want to run this once on mount
     let html5QrcodeScanner: Html5QrcodeScanner | null = null;
 
     // Success callback
     const onScanSuccess = (decodedText: string) => {
-      // Stop the scanner
       if (html5QrcodeScanner) {
         html5QrcodeScanner.clear().catch(error => {
           console.error("Failed to clear scanner", error);
@@ -27,30 +25,27 @@ export default function ScanPage() {
       
       setScanResult(decodedText);
       
-      // --- Handle the Redirect ---
-      // We assume the QR code contains a full URL to our app's menu
-      // e.g., "https://your-app.com/menu?table_id=T01&restaurant_id=R01"
       try {
         const url = new URL(decodedText);
-        // We can extract parameters and pass them on
         const tableId = url.searchParams.get('table_id');
         const restaurantId = url.searchParams.get('restaurant_id');
 
-        // Here you would save the tableId and restaurantId to context or state
-        // For now, we'll just redirect to the menu page
-        
         // TODO: Save tableId and restaurantId to a global context
+        // e.g., setTableId(tableId);
+
+        // --- THIS IS THE FIX ---
+        // Redirect to the correct path, which does not include (customer)
+        router.push('/menu'); 
         
-        router.push('/(customer)/menu'); 
       } catch (error) {
         console.error("Scanned QR code is not a valid URL:", decodedText);
         setScanError("Invalid QR code. Please scan a valid restaurant code.");
       }
     };
 
-    // Failure callback (optional, but good for debugging)
+    // Failure callback (optional)
     const onScanFailure = (error: string) => {
-      // This will fire continuously when no QR code is found
+      // This will fire continuously, so we'll just log it
       // console.warn(`QR scan error: ${error}`);
     };
 
@@ -87,7 +82,6 @@ export default function ScanPage() {
         Please scan the QR code on your table to see the menu.
       </p>
 
-      {/* This div is where the scanner will be rendered */}
       <div id={QR_SCANNER_ELEMENT_ID} className="w-full"></div>
 
       {scanResult && (
