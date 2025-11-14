@@ -3,14 +3,14 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-// --- THESE LINKS ARE NOW CORRECT ---
-// They point to /admin/dashboard, /admin/orders, etc.
 const adminLinks = [
   { name: 'Dashboard', href: '/admin/dashboard' },
   { name: 'Orders', href: '/admin/orders' },
   { name: 'Menu', href: '/admin/menu' },
   { name: 'Tables', href: '/admin/tables' },
-  { name:ag: 'Bookings', href: '/admin/bookings' },
+  // --- THIS IS THE FIX ---
+  { name: 'Bookings', href: '/admin/bookings' }, 
+  // --- END OF FIX ---
   { name: 'Analytics', href: '/admin/analytics' },
   { name: 'Settings', href: '/admin/settings' },
 ];
