@@ -5,7 +5,9 @@ import { IUser } from '@/models/User';
 const JWT_SECRET = process.env.JWT_SECRET;
 
 if (!JWT_SECRET) {
-  throw new Error('Please define the JWT_SECRET environment variable inside .env.local');
+  throw new Error(
+    'Please define the JWT_SECRET environment variable inside .env.local'
+  );
 }
 
 /**
@@ -14,8 +16,13 @@ if (!JWT_SECRET) {
  */
 export function generateToken(user: IUser) {
   return jwt.sign(
-    { id: user._id, email: user.email, role: user.role, restaurant_id: user.restaurant_id }, // Payload
-    JWT_SECRET, // Secret
+    {
+      id: user._id,
+      email: user.email,
+      role: user.role,
+      restaurant_id: user.restaurant_id,
+    }, // Payload
+    JWT_SECRET!, // --- THIS IS THE FIX ---
     { expiresIn: '24h' } // Expiration
   );
 }
@@ -34,8 +41,12 @@ export async function verifyToken(request: NextRequest) {
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    return decoded as jwt.JwtPayload & { id: string; role: string; email: string };
+    const decoded = jwt.verify(token, JWT_SECRET!); // --- THIS IS THE FIX ---
+    return decoded as jwt.JwtPayload & {
+      id: string;
+      role: string;
+      email: string;
+    };
   } catch (error) {
     console.error('JWT verification error:', error);
     return null;
