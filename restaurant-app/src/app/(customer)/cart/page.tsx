@@ -39,7 +39,8 @@ export default function CartPage() {
             <div>
               {cartItems.map((item, index) => (
                 // We need a unique key. Let's use item id + portion
-                <CartItem key={`${item._id}-${item.portion}-${index}`} item={item} />
+                // --- THIS IS THE CORRECTED LINE ---
+                <CartItem key={`${item._id}-${item.selectedPortion}-${index}`} item={item} />
               ))}
             </div>
           </div>
