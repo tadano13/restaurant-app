@@ -3,27 +3,25 @@
 import React from 'react';
 import Image from 'next/image';
 import { useCart } from '@/context/CartContext';
-import { ICartItem } from '@/types'; // Re-using the type from index.ts
+// Import the CartItem type from the context file
+import { CartItem as CartItemType } from '@/context/CartContext'; 
 
-// The item we get from CartContext has more properties
-// Let's define the prop type based on CartContext's internal state
+// Use the imported type for the props
 type CartItemProps = {
-  item: ICartItem & {
-    _id: string;
-    image_url?: string;
-    itemPrice: number;
-  };
+  item: CartItemType;
 };
 
 export default function CartItem({ item }: CartItemProps) {
   const { updateQuantity, removeFromCart } = useCart();
 
   const handleQuantityChange = (newQuantity: number) => {
-    updateQuantity(item._id, item.portion, newQuantity);
+    // Use the correct property: selectedPortion
+    updateQuantity(item._id, item.selectedPortion, newQuantity);
   };
 
   const handleRemove = () => {
-    removeFromCart(item._id, item.portion);
+    // Use the correct property: selectedPortion
+    removeFromCart(item._id, item.selectedPortion);
   };
 
   return (
@@ -42,7 +40,8 @@ export default function CartItem({ item }: CartItemProps) {
       <div className="flex-grow">
         <h4 className="text-lg font-semibold">{item.name}</h4>
         <p className="text-sm text-gray-600 capitalize">
-          Portion: {item.portion}
+          {/* Use the correct property: selectedPortion */}
+          Portion: {item.selectedPortion}
         </p>
         <p className="text-sm text-gray-500">
           Unit Price: ${item.itemPrice.toFixed(2)}
