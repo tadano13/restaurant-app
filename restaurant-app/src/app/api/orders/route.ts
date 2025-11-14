@@ -3,6 +3,7 @@ import connectDB from '@/lib/db';
 import Order from '@/models/Order';
 import Table from '@/models/Table';
 import MenuItem from '@/models/MenuItem';
+import { IPortion } from '@/types'; // <-- 1. IMPORT THE TYPE
 
 // POST /api/orders
 export async function POST(request: NextRequest) {
@@ -49,7 +50,12 @@ export async function POST(request: NextRequest) {
       let itemPrice = dbItem.price;
       // Find price adjustment for selected portion
       if (item.portion) {
-        const portion = dbItem.portions.find((p) => p.type === item.portion);
+        // --- 2. THIS IS THE FIX ---
+        const portion = dbItem.portions.find(
+          (p: IPortion) => p.type === item.portion
+        );
+        // --- END OF FIX ---
+
         if (portion) {
           itemPrice += portion.price_adjustment;
         }
@@ -79,7 +85,7 @@ export async function POST(request: NextRequest) {
 
     // 5. Update table status
     await Table.findByIdAndUpdate(table_id, { status: 'occupied' });
-    
+
     // TODO: Emit a socket.io event 'order:new' here
 
     return NextResponse.json(
