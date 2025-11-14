@@ -11,7 +11,8 @@ export default function HomePage() {
       </p>
 
       <div className="flex gap-4">
-        <Link href="/(customer)/scan">
+        {/* --- LINK FIXED: Removed (customer) --- */}
+        <Link href="/scan">
           <span className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors cursor-pointer">
             Go to Scanner
           </span>
