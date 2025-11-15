@@ -81,5 +81,122 @@ export default function TableBookingPage() {
       console.log('Booking confirmed! ID: ' + data.booking_id); // Use console.log
       router.push('/'); 
       
-    } catch (err: any)
-[Immersive content redacted for brevity.]
+    // --- THIS IS THE FIX ---
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+    // --- END OF FIX ---
+  };
+
+  return (
+    <div className="container mx-auto p-4 max-w-lg">
+      <h1 className="text-3xl font-bold text-center mb-8">Book a Table</h1>
+      
+      <form onSubmit={handleCheckAvailability} className="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h2 className="text-2xl font-semibold mb-4">Find a Table</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Date</label>
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Time</label>
+            <input
+              type="time"
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+              required
+            />
+          </div>
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">Guests</label>
+          <select
+            value={guests}
+            onChange={(e) => setGuests(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+          >
+            {[...Array(8)].map((_, i) => (
+              <option key={i + 1} value={i + 1}>{i + 1} Guest{i > 0 ? 's' : ''}</option>
+            ))}
+          </select>
+        </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-primary-600 text-white font-semibold py-2 rounded-lg hover:bg-primary-700 disabled:bg-gray-400"
+        >
+          {loading ? 'Checking...' : 'Check Availability'}
+        </button>
+      </form>
+
+      {availableTables.length > 0 && (
+        <form onSubmit={handleBookTable} className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-2xl font-semibold mb-4">Confirm Your Details</h2>
+          
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">Select Table</label>
+            <p className="text-xs text-gray-500 mb-2">These tables fit your party size. We've selected one for you.</p>
+            <input
+              type="text"
+              value={`Table ${availableTables[0].table_number} (Capacity: ${availableTables[0].capacity})`}
+              onFocus={() => setSelectedTableId(availableTables[0]._id)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100"
+              readOnly
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">Full Name</label>
+            <input
+              type="text"
+              value={customerName}
+              onChange={(e) => setCustomerName(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <input
+              type="email"
+              value={customerEmail}
+              onChange={(e) => setCustomerEmail(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">Phone</label>
+            <input
+              type="tel"
+              value={customerPhone}
+              onChange={(e) => setCustomerPhone(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-green-600 text-white font-semibold py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400"
+          >
+            {loading ? 'Booking...' : 'Confirm Booking'}
+          </button>
+        </form>
+      )}
+
+      {error && <p className="text-red-500 text-center mt-4">{error}</p>}
+    </div>
+  );
+}
