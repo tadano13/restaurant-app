@@ -1,10 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-// import { IRestaurant } from '@/types'; // We'll need this type
 
 export default function SettingsPage() {
-  // Placeholder state for restaurant settings
   const [settings, setSettings] = useState({
     name: '',
     address: '',
@@ -15,18 +13,6 @@ export default function SettingsPage() {
   });
   const [loading, setLoading] = useState(false);
   
-  // In a real app, you would fetch the current restaurant's settings
-  // useEffect(() => {
-  //   const fetchSettings = async () => {
-  //     setLoading(true);
-  //     const res = await fetch(`/api/restaurant/${MOCK_RESTAURANT_ID}`);
-  //     const data = await res.json();
-  //     setSettings(data);
-  //     setLoading(false);
-  //   };
-  //   fetchSettings();
-  // }, []);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setSettings(prev => ({ ...prev, [name]: value }));
@@ -35,11 +21,11 @@ export default function SettingsPage() {
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // In a real app, you would call a PUT API to save settings
     console.log("Saving settings:", settings);
     setTimeout(() => {
       setLoading(false);
-      alert('Settings saved (mock)!');
+      // alert('Settings saved (mock)!');
+      console.log('Settings saved (mock)!');
     }, 1000);
   };
 
@@ -57,7 +43,7 @@ export default function SettingsPage() {
               name="name"
               value={settings.name}
               onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" // Updated color
             />
           </div>
 
@@ -68,7 +54,7 @@ export default function SettingsPage() {
               name="address"
               value={settings.address}
               onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" // Updated color
             />
           </div>
 
@@ -80,7 +66,7 @@ export default function SettingsPage() {
                 name="phone"
                 value={settings.phone}
                 onChange={handleChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" // Updated color
               />
             </div>
             <div>
@@ -90,20 +76,18 @@ export default function SettingsPage() {
                 name="email"
                 value={settings.email}
                 onChange={handleChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500" // Updated color
               />
             </div>
           </div>
           
-          {/* We would add more fields here for operating_hours, etc. */}
-
         </div>
         
         <div className="mt-6 pt-4 border-t">
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400"
+            className="px-6 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:bg-gray-400" // Updated color
           >
             {loading ? 'Saving...' : 'Save Settings'}
           </button>
