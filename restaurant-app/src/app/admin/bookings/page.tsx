@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { ITableBooking } from '@/types';
 
-// Placeholder restaurant ID
 const MOCK_RESTAURANT_ID = "60d0fe4f5311236168a109ca";
 
 export default function BookingsPage() {
@@ -11,11 +10,9 @@ export default function BookingsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch all bookings
   const fetchBookings = async () => {
     try {
       setLoading(true);
-      // We need to pass auth, but we'll skip that for now
       const res = await fetch(`/api/bookings/${MOCK_RESTAURANT_ID}`);
       if (!res.ok) {
         throw new Error('Failed to fetch bookings');
@@ -33,7 +30,6 @@ export default function BookingsPage() {
     fetchBookings();
   }, []);
 
-  // Handle changing the status of a booking
   const handleStatusChange = async (bookingId: string, newStatus: string) => {
     try {
       const res = await fetch(`/api/bookings/${MOCK_RESTAURANT_ID}/${bookingId}`, {
@@ -46,7 +42,6 @@ export default function BookingsPage() {
         throw new Error('Failed to update booking status');
       }
 
-      // Update local state to reflect the change
       setBookings((prevBookings) =>
         prevBookings.map((booking) =>
           booking._id === bookingId
@@ -55,13 +50,13 @@ export default function BookingsPage() {
         )
       );
     } catch (err: any) {
-      alert(`Error: ${err.message}`);
+      console.error('Booking update error:', err.message);
     }
   };
 
   const getStatusClass = (status: string) => {
     switch (status) {
-      case 'confirmed': return 'bg-blue-100 text-blue-800';
+      case 'confirmed': return 'bg-primary-100 text-primary-800'; // Updated color
       case 'completed': return 'bg-green-100 text-green-800';
       case 'cancelled': return 'bg-red-100 text-red-800';
       case 'no-show': return 'bg-yellow-100 text-yellow-800';
@@ -115,7 +110,7 @@ export default function BookingsPage() {
                     <select
                       value={booking.status}
                       onChange={(e) => handleStatusChange(booking._id, e.target.value)}
-                      className="block w-full border-gray-300 rounded-md shadow-sm"
+                      className="block w-full border-gray-300 rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500" // Updated color
                     >
                       <option value="confirmed">Confirmed</option>
                       <option value="completed">Completed</option>
