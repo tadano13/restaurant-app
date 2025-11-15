@@ -3,16 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import { IOrder } from '@/types';
 
-// This is a placeholder. In a real app, this would
-// come from the logged-in admin's auth context/session.
-const MOCK_RESTAURANT_ID = "60d0fe4f5311236168a109ca"; // Replace with a real-looking Mongo ID
+const MOCK_RESTAURANT_ID = "60d0fe4f5311236168a109ca"; 
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<IOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch all orders
   const fetchOrders = async () => {
     try {
       setLoading(true);
@@ -35,7 +32,6 @@ export default function OrdersPage() {
     fetchOrders();
   }, []);
 
-  // Handle changing the status of an order
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     try {
       const res = await fetch(`/api/orders/${orderId}`, {
@@ -48,21 +44,20 @@ export default function OrdersPage() {
         throw new Error('Failed to update status');
       }
 
-      // Update the status in the local state
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           order._id === orderId ? { ...order, status: newStatus as IOrder['status'] } : order
         )
       );
     } catch (err: any) {
-      alert(`Error: ${err.message}`);
+      console.error('Status update error:', err.message);
     }
   };
 
   const getStatusClass = (status: string) => {
     switch (status) {
       case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'confirmed': return 'bg-blue-100 text-blue-800';
+      case 'confirmed': return 'bg-primary-100 text-primary-800'; // Updated color
       case 'preparing': return 'bg-indigo-100 text-indigo-800';
       case 'ready': return 'bg-green-100 text-green-800';
       case 'served': return 'bg-gray-100 text-gray-800';
@@ -113,7 +108,7 @@ export default function OrdersPage() {
                     <select
                       value={order.status}
                       onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                      className="block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                      className="block w-full border-gray-300 rounded-md shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm" // Updated color
                     >
                       <option value="pending">Pending</option>
                       <option value="confirmed">Confirmed</option>
