@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { ITable } from '@/types';
 
-// Placeholder restaurant ID
 const MOCK_RESTAURANT_ID = "60d0fe4f5311236168a109ca";
 
 export default function TablesPage() {
@@ -11,7 +10,6 @@ export default function TablesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch all tables
   const fetchTables = async () => {
     try {
       setLoading(true);
@@ -32,32 +30,42 @@ export default function TablesPage() {
     fetchTables();
   }, []);
 
-  // Helper function for styling table status
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'available':
-        return 'bg-green-500';
+        return 'bg-primary-500'; // Updated color
       case 'occupied':
         return 'bg-red-500';
       case 'reserved':
-        return 'bg-blue-500';
+        return 'bg-accent-500'; // Updated color
       case 'maintenance':
-        return 'bg-yellow-500';
+        return 'bg-accent-400'; // Updated color
       default:
         return 'bg-gray-400';
     }
   };
-
-  // TODO: Add a modal/form to create a new table
-  // TODO: Add a way to update a table's status
+  
+  const getStatusBorder = (status: string) => {
+     switch (status) {
+      case 'available':
+        return 'border-primary-500'; // Updated color
+      case 'occupied':
+        return 'border-red-500';
+      case 'reserved':
+        return 'border-accent-500'; // Updated color
+      case 'maintenance':
+        return 'border-accent-400'; // Updated color
+      default:
+        return 'border-gray-400';
+    }
+  }
 
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Table Management</h1>
         <button
-          // onClick={handleAddNewTable}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700" // Updated color
         >
           + Add New Table
         </button>
@@ -69,12 +77,11 @@ export default function TablesPage() {
       {!loading && !error && (
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {tables
-            .sort((a, b) => a.table_number - b.table_number) // Sort tables by number
+            .sort((a, b) => a.table_number - b.table_number) 
             .map((table) => (
               <div
                 key={table._id}
-                className="bg-white p-4 rounded-lg shadow-md border-t-4"
-                style={{ borderTopColor: getStatusColor(table.status).replace('bg-', '').split('-')[0] }}
+                className={`bg-white p-4 rounded-lg shadow-md border-t-4 ${getStatusBorder(table.status)}`} // Updated class
               >
                 <div className="flex justify-between items-center">
                   <h3 className="text-xl font-bold">
@@ -91,7 +98,6 @@ export default function TablesPage() {
                 <p className="text-gray-600 text-sm mt-2">
                   Capacity: {table.capacity} guests
                 </p>
-                {/* We can add more details, like current order or booking */}
               </div>
             ))}
         </div>
